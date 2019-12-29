@@ -1,0 +1,5 @@
+build/
+dist/
+trt_pose.egg-info/
+trt_pose/__pycache__/
+tasks/human_pose/models/
