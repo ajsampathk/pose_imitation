@@ -80,7 +80,8 @@ def human_publish(people):
         human_pub.publish(human_msg)        
     
 
-print("Starting Inference..")
+print("Ready to Start Inference")
+input("\t Press [Enter] to start")
 def execute(change):
     try:
         image = change['new']
