@@ -54,7 +54,7 @@ def preprocess(image):
 
 def rename_sample(sample,labpath,label,n):
     name,ext = sample.split('.')
-    name = label+'_'+str(n).zfill(6)
+    name = label+'_'+str(n).zfill(8)
     sample_new = name+'.'+ext
     os.rename(os.path.join(labpath,sample),os.path.join(labpath,sample_new))
     return sample_new
@@ -80,18 +80,19 @@ def get_points(counts,objects,peaks):
     return people     
 
 parse = ParseObjects(topology)
-draw = DrawObjects(topology)
+
 print("Done")
 
 print("Dataset source dir:{}".format(DATA_PATH))
 labels = os.listdir(DATA_PATH)
 print("Labels found: {}".format(labels))
+json.dump(labels,open('LabelIndex.json','w'))
 
 for label in labels:
     labpath=os.path.join(DATA_PATH,label)
     samples = os.listdir(labpath)
     print("Found {} samples for label {}".format(len(os.listdir(labpath)),label))
-    for i in range(len(labpath)):
+    for i in range(len(os.listdir(labpath))):
         keypoints = {}
         sample = rename_sample(samples[i],labpath,label,i)
         print("Processing sample [{}]".format(sample))
@@ -104,7 +105,7 @@ for label in labels:
         keypoints = get_points(counts,objects,peaks)[0]
         num_data = []
         for key in keypoints:
-            print(keypoints[key])
+            #print(keypoints[key])
             for point in keypoints[key]:
                 num_data.append(point)
         dataset[sample]={"input":num_data,"output":[label==l for l in labels]}

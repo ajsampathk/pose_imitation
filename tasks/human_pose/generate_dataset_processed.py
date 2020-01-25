@@ -85,17 +85,18 @@ def get_angles(person):
     for link in skeleton:
         try:
             if person[link[0]]==(-1,-1) or person[link[1]]==(-1,-1):
-                angles.append(-10)
+                angles.append(0)
             else:
                 m = (person[link[1]][1]-person[link[0]][1])/(person[link[1]][0]-person[link[0]][0])
                 angles.append(math.atan(m))
         except:
-            angles.append(-10)
+            angles.append(0)
     return angles
 
 
 
 parse = ParseObjects(topology)
+
 
 print("Done")
 
@@ -117,6 +118,8 @@ for label in labels:
         cmap, paf = model_trt(data)
         cmap, paf = cmap.detach().cpu(), paf.detach().cpu() 
         counts,objects,peaks = parse(cmap,paf)
+        draw(image, counts, objects, peaks)
+
         keypoints = get_points(counts,objects,peaks)[0]
         num_data = get_angles(keypoints)
         
