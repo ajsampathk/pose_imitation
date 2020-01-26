@@ -1,4 +1,4 @@
-ROS-TRTPOSE:
-![](test_results.gif)
-ROS-Gesture-Classification:
-![](gesture_results.gif)
+
+![](test_results.gif "ROS-TRTPOSE:")
+
+![](gesture_results.gif "ROS-Gesture-Classification:")
