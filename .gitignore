@@ -6,3 +6,4 @@ tasks/human_pose/models/
 tasks/human_pose/__pycache__
 tasks/human_pose/Pose_DS
 tasks/human_pose/PoseDataset
+tasks/human_pose/Label*

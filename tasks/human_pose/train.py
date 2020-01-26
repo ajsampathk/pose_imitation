@@ -7,15 +7,16 @@ import random
 
 
 args = sys.argv
-if not len(args)>1:
-    print("Usage: \n \t python {} [PATH_TO_DATASET_JSON]".format(args[0]))
+if not len(args)>2:
+    print("Usage: \n \t python {} [PATH_TO_DATASET_JSON] [PATH_TO_INDEX]".format(args[0]))
     exit()
 DATASET = args[1]
+INDEX =args[2]
 
 device = torch.device("cuda")
 
 dataset = json.load(open(DATASET,'r'))
-labels = json.load(open('LabelIndex.json','r'))
+labels = json.load(open(INDEX,'r'))
 
 
 INPUT = [dataset[dat]['input'] for dat in dataset]
@@ -57,23 +58,26 @@ VAL_OUTPUT = Variable(torch.tensor(VAL_OUTPUT))
 
 model = LinearModel(len(INPUT[0]),len(OUTPUT[0]))
 criterion = torch.nn.MSELoss(reduction='mean')
-optimizer = torch.optim.SGD(model.parameters(),lr=0.7)
+optimizer = torch.optim.SGD(model.parameters(),lr=0.05)
 
-for epoch in range(500):
+for epoch in range(50000):
+    Tloss = 0
     for i in range(len(BATCH_INPUT)):
       pred_y = model(BATCH_INPUT[i].float())
       loss = criterion(pred_y,BATCH_OUTPUT[i].float())
       optimizer.zero_grad()
       loss.backward()
       optimizer.step()
+      Tloss+=loss.data
       print("Epoch {}, Loss {}".format(epoch,loss.data),end='\r')
       sys.stdout.flush()	
+    Tloss/=len(BATCH_INPUT)
     val_pred = model(VAL_INPUT.float())
     val_loss = criterion(val_pred,VAL_OUTPUT.float())
-    print("Validation Loss at Epoch {}: {}".format(epoch,val_loss))
+    print("Epoch {}:[VLoss:{:.8f}][TLoss:{:.8f}]".format(epoch,val_loss,Tloss))
 
 
-saved_model = "models/classifier_net_"+DATASET.split('.')[0]+"_"+str(len(INPUT[0]))+"x"+str(len(OUTPUT[0]))+"_h1xh2_"+str(model.hidden_1.in_features)+"x"+str(model.hidden_2.out_features)+"_size_"+str(len(INPUT))+".pth"
+saved_model = "models/classifier_net_"+DATASET.split('.')[0]+"_"+str(len(INPUT[0]))+"x"+str(len(OUTPUT[0]))+"_h1xh2_"+str(model.hidden_1.in_features)+"x"+str(model.hidden_2.out_features)+"_size_"+str(len(BATCH_INPUT))+".pth"
 torch.save(model.state_dict(),saved_model)
 
 try:

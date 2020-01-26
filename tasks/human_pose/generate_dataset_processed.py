@@ -35,7 +35,10 @@ print("Done")
 
 
 print("Loading Model...")
-num_parts = len(human_pose['keypoints'])
+joints = human_pose['keypoints']
+
+
+
 num_links = len(human_pose['skeleton'])
 model_trt = TRTModule()
 model_trt.load_state_dict(torch.load(OPTIMIZED_MODEL))
@@ -79,15 +82,28 @@ def get_points(counts,objects,peaks):
         people.append(person)
     return people     
 
+def get_pairs(person):
+  links = {'N_RS':('neck','right_shoulder'),'N_LS':('neck','left_shoulder'),'RS_RE':('right_shoulder','right_elbow'),'LS_LE':('left_shoulder','left_elbow'),'RE_RW':('right_elbow','right_wrist'),'LE_LW':('left_elbow','left_wrist'),'N_RH':('neck','right_hip'),'N_LH':('neck','left_hip'),'RH_RK':('right_hip','right_knee'),'RK_RA':('right_knee','right_ankle'),'LH_LK':('left_hip','left_knee'),'LK_LA':('left_knee','left_ankle')}
+
+  upper_links = ['N_RS','N_LS','RS_RE','LS_LE','RE_RW','LE_LW']
+
+  pairs = {}
+  #print(keypoints)
+  for link in upper_links:
+    pairs[link] = (person[joints.index(links[link][0])],person[joints.index(links[link][1])])
+  return pairs
+  
+
 def get_angles(person):
-    skeleton = human_pose['skeleton']
+
     angles = []
+    skeleton = get_pairs(person)
     for link in skeleton:
         try:
-            if person[link[0]]==(-1,-1) or person[link[1]]==(-1,-1):
+            if skeleton[link][0]==(-1,-1) or skeleton[link][1]==(-1,-1):
                 angles.append(0)
             else:
-                m = (person[link[1]][1]-person[link[0]][1])/(person[link[1]][0]-person[link[0]][0])
+                m = (skeleton[link][1][1]-skeleton[link][0][1])/(skeleton[link][1][0]-skeleton[link][0][0])
                 angles.append(math.atan(m))
         except:
             angles.append(0)
@@ -118,7 +134,7 @@ for label in labels:
         cmap, paf = model_trt(data)
         cmap, paf = cmap.detach().cpu(), paf.detach().cpu() 
         counts,objects,peaks = parse(cmap,paf)
-        draw(image, counts, objects, peaks)
+
 
         keypoints = get_points(counts,objects,peaks)[0]
         num_data = get_angles(keypoints)
@@ -127,5 +143,5 @@ for label in labels:
 
 
 print("Writing to \"Lables_processed.json\"..")
-json.dump(dataset,open('Labels_processed.json','w'))
-json.dump(labels,open('LabelIndex.json','w'))
+json.dump(dataset,open('Labels_processed_'+DATA_PATH.split('/')[0]+'.json','w'))
+json.dump(labels,open('LabelIndex_'+DATA_PATH.split('/')[0]+'.json','w'))
