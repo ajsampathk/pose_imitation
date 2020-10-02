@@ -20,6 +20,26 @@ To get started with trt_pose, follow these steps.
     sudo pip3 install tqdm cython pycocotools
     sudo apt-get install python3-matplotlib
     ```
+### Step 2 - Install trt_pose
+
+```python
+git clone https://github.com/ajsampathk/pose_imitation.git
+cd pose_imitation
+sudo python3 setup.py install
+```
+### Step 3 - Setting up PyTorch models
+
+```python
+mkdir tasks/human_pose/models
+cd tasks/human_pose/models
+```
+Download the resnet18 model:
+| Model | Jetson Nano | Jetson Xavier | Weights |
+|-------|-------------|---------------|---------|
+| resnet18_baseline_att_224x224_A | 22 | 251 | [download (81MB)](https://drive.google.com/open?id=1XYDdCUdiF2xxx4rznmLb62SdOUZuoNbd) |
+
+If you'd like to use densenet or use your own model, I suggest you take a look at the [official trt_pose](https://github.com/NVIDIA-AI-IOT/trt_pose) repo from NVIDA
+
 
 ### Resluts
 
