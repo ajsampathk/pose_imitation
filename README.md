@@ -20,14 +20,6 @@ To get started with trt_pose, follow these steps.
     sudo pip3 install tqdm cython pycocotools
     sudo apt-get install python3-matplotlib
     ```
-    
-### Step 2 - Install trt_pose
-
-```python
-git clone https://github.com/NVIDIA-AI-IOT/trt_pose
-cd trt_pose
-sudo python3 setup.py install
-```
 
 ### Resluts
 
