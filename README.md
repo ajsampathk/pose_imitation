@@ -45,6 +45,7 @@ Let's optimize this model with TensorRT, run the ```optimize.py``` script by pas
 ```python
 python3 optimize.py resnet18_baseline_att_224x224_A.pth
 ```
+This should create an optimized model named ```trt_resnet18_baseline_att_224x224_A.pth``` 
 
 
 ### Resluts
