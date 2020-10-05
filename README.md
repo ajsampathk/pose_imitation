@@ -57,6 +57,9 @@ Install ```python3-rospkg-modules``` from apt:
 
 ```sudo apt-get install python3-rospkg-modules```
 
+Now, drop into a python3 shell and ```import rospy```, if everything went okay, there will be no errors. If you get an import error add ```/opt/ros/[DISTRO]/lib/python2.7/dist-packages``` tothe PYTHONPATH
+
+
 
 
 
