@@ -10,8 +10,8 @@ import torch
 import torch2trt
 import trt_pose.models
 
-with open('human_pose.json','r') as f:
-  huamn_pose = json.load(f)
+with open('../human_pose.json','r') as f:
+  human_pose = json.load(f)
 
 num_parts = len(human_pose['keypoints'])
 num_links = len(human_pose['skeleton'])
@@ -31,7 +31,7 @@ print("Optimizing Model")
 
 model_trt = torch2trt.torch2trt(model,[data],fp16_mode=True, max_workspace_size=1<<25)
 
-OPTIMIZED_MODEL = 'trt'+MODEL_WEIGHTS
+OPTIMIZED_MODEL = 'trt_'+MODEL_WEIGHTS
 
 print("Saving Optimized model as {}".format(OPTIMIZED_MODEL))
 

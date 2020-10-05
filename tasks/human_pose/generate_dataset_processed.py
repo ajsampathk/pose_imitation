@@ -22,7 +22,7 @@ from trt_pose.parse_objects import ParseObjects
 
 
 
-OPTIMIZED_MODEL = 'models/resnet18_baseline_att_224x224_A_epoch_249_trt.pth'
+OPTIMIZED_MODEL = 'models/trt_resnet18_baseline_att_224x224_A_epoch_249.pth'
 dataset ={}
 
 
