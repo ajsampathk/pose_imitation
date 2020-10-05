@@ -4,4 +4,5 @@ trt_pose.egg-info/
 trt_pose/__pycache__/
 tasks/human_pose/models/*.pth
 tasks/human_pose/__pycache__
-
+ros_trt/build/
+ros_trt/devel/
