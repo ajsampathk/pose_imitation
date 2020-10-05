@@ -43,7 +43,7 @@ If you'd like to use densenet or use your own model, I suggest you take a look a
 Let's optimize this model with TensorRT, run the ```optimize.py``` script by passing the above model weights
 
 ```python
-python3 optimize.py resnet18_baseline_att_224x224_A_[EPIOCH].pth
+python3 optimize.py resnet18_baseline_att_224x224_A_[EPOCH].pth
 ```
 This should create an optimized model named ```trt_resnet18_baseline_att_224x224_A_[EPOCH].pth``` 
 
@@ -51,14 +51,16 @@ This should create an optimized model named ```trt_resnet18_baseline_att_224x224
 
 To get the inference image and the inference data published on a ROS network, we need to set up a few things.
 
-#### ROS Package Modules for python3
-ROS does not have a great track record when it comes to python3 and especially CVBridge with Python3. So rather than creating a ROS environment with python3 as the default interpreter, we will add ROS support for pyhton3 instead.
+#### Step 4.1 - ROS Package Modules for python3
+ROS does not have a great track record when it comes to python3 and especially CVBridge with Python3. So rather than creating a ROS environment with python3 as the default interpreter, we will add ROS support for python3 instead.
 Install ```python3-rospkg-modules``` from apt:
 
 ```sudo apt-get install python3-rospkg-modules```
 
 Now, drop into a python3 shell and ```import rospy```, if everything went okay, there will be no errors. If you get an import error add ```/opt/ros/[DISTRO]/lib/python2.7/dist-packages``` tothe PYTHONPATH
 
+#### Step 4.2 - TRT Bridge
+Now that the ROS module problem has been solved we can build our ROS bridge for the inference image conversion from CV image to ROS image.
 
 
 
