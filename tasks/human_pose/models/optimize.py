@@ -5,6 +5,7 @@ if not len(sys.argv) == 2:
   print("Usage: \n python3 {} [MODEL_WEIGHTS_NAME].pth".format(sys.argv[0]))
   sys.exit()
 
+MODEL_WEIGHTS = sys.argv[1]
 import torch
 import torch2trt
 import trt_pose.models
@@ -15,11 +16,12 @@ with open('human_pose.json','r') as f:
 num_parts = len(human_pose['keypoints'])
 num_links = len(human_pose['skeleton'])
 
-print("Loading Model")
+print("Loading Resnet Model")
+
 
 model = trt_pose.models.resnet18_baseline_att(num_parts,2*num_links).cuda().eval()
+model.load_state_dict(torch.load(MODEL_WEIGHTS))
 
-MODEL_WEIGHTS = sys.argv[1]
 WIDTH = 224
 HEIGHT = 224
 
