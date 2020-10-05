@@ -34,7 +34,7 @@ mkdir tasks/human_pose/models
 cd tasks/human_pose/models
 ```
 Download the resnet18 model:
-| Model | Jetson Nano | Jetson Xavier | Weights |
+| Model | Jetson Nano(FPS) | Jetson Xavier(FPS) | Weights |
 |-------|-------------|---------------|---------|
 | resnet18_baseline_att_224x224_A | 22 | 251 | [download (81MB)](https://drive.google.com/open?id=1XYDdCUdiF2xxx4rznmLb62SdOUZuoNbd) |
 
