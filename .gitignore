@@ -7,3 +7,4 @@ tasks/human_pose/__pycache__
 ros_trt/build/
 ros_trt/devel/
 ros_trt/.catkin_workspace
+ros_trt/src/CMakeLists.txt
