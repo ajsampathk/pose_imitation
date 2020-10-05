@@ -38,7 +38,7 @@ Download the resnet18 model:
 |-------|-------------|---------------|---------|
 | resnet18_baseline_att_224x224_A | 22 | 251 | [download (81MB)](https://drive.google.com/open?id=1XYDdCUdiF2xxx4rznmLb62SdOUZuoNbd) |
 
-If you'd like to use densenet or use your own model, I suggest you take a look at the [official trt_pose](https://github.com/NVIDIA-AI-IOT/trt_pose) repo from NVIDA
+If you'd like to use densenet or another model and train it yourself, I suggest you take a look at the [official trt_pose](https://github.com/NVIDIA-AI-IOT/trt_pose) repo from NVIDA
 
 Let's optimize this model with TensorRT, run the ```optimize.py``` script by passing the above model weights
 
@@ -57,11 +57,18 @@ Install ```python3-rospkg-modules``` from apt:
 
 ```sudo apt-get install python3-rospkg-modules```
 
-Now, drop into a python3 shell and ```import rospy```, if everything went okay, there will be no errors. If you get an import error add ```/opt/ros/[DISTRO]/lib/python2.7/dist-packages``` tothe PYTHONPATH
+Now, drop into a python3 shell and ```import rospy```, if everything went okay, there will be no errors. If you get an import error add ```/opt/ros/[DISTRO]/lib/python2.7/dist-packages``` to your PYTHONPATH
 
 #### Step 4.2 - TRT Bridge
 Now that the ROS module problem has been solved we can build our ROS bridge for the inference image conversion from CV image to ROS image.
+A ROS package is located at ```ros_trt/src/trt_bridge```, you could either build the package at ```ros_trt/``` by:
 
+```python
+cd ros_trt/
+catkin_make
+```
+Or, you can copy the folder ```trt_bridge``` to your desired workspace and build it there.
+Once it is built, we should have everything we needto run our inference engine.
 
 
 
