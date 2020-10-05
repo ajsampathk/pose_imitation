@@ -40,6 +40,12 @@ Download the resnet18 model:
 
 If you'd like to use densenet or use your own model, I suggest you take a look at the [official trt_pose](https://github.com/NVIDIA-AI-IOT/trt_pose) repo from NVIDA
 
+Let's optimize this model with TensorRT, run the ```optimize.py``` script by passing the above model weights
+
+```python
+python3 optimize.py resnet18_baseline_att_224x224_A.pth
+```
+
 
 ### Resluts
 
