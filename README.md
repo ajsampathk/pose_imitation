@@ -43,9 +43,21 @@ If you'd like to use densenet or use your own model, I suggest you take a look a
 Let's optimize this model with TensorRT, run the ```optimize.py``` script by passing the above model weights
 
 ```python
-python3 optimize.py resnet18_baseline_att_224x224_A.pth
+python3 optimize.py resnet18_baseline_att_224x224_A_[EPIOCH].pth
 ```
-This should create an optimized model named ```trt_resnet18_baseline_att_224x224_A.pth``` 
+This should create an optimized model named ```trt_resnet18_baseline_att_224x224_A_[EPOCH].pth``` 
+
+### Step 4 - Setting up ROS packages
+
+To get the inference image and the inference data published on a ROS network, we need to set up a few things.
+
+#### ROS Package Modules for python3
+ROS does not have a great track record when it comes to python3 and especially CVBridge with Python3. So rather than creating a ROS environment with python3 as the default interpreter, we will add ROS support for pyhton3 instead.
+Install ```python3-rospkg-modules``` from apt:
+
+```sudo apt-get install python3-rospkg-modules```
+
+
 
 
 ### Resluts
