@@ -8,7 +8,8 @@ from torch2trt import TRTModule
 import cv2
 import torchvision.transforms as transforms
 import PIL.Image
-from jetcam.usb_camera import USBCamera
+import numpy as np
+#from jetcam.usb_camera import USBCamera
 
 
 from trt_pose.draw_objects import DrawObjects
@@ -16,7 +17,7 @@ from trt_pose.parse_objects import ParseObjects
 
 
 
-OPTIMIZED_MODEL = 'models/resnet18_baseline_att_224x224_A_epoch_249_trt.pth'
+OPTIMIZED_MODEL = 'models/trt_resnet18_baseline_att_224x224_A_epoch_249.pth'
 
 
 with open('human_pose.json', 'r') as f:
@@ -33,8 +34,8 @@ from trt_bridge.msg import *
 human_msg = Human()
 
 rospy.init_node('Inference')
-image_pub = rospy.Publisher("/Inference/pre_image",Image,queue_size=5)
-human_pub = rospy.Publisher("/Inference/Humans", Human,queue_size=5)
+image_pub = rospy.Publisher("/inference/np_out",Image,queue_size=5)
+human_pub = rospy.Publisher("/inference/Humans", Human,queue_size=5)
 print("Done")
 
 num_parts = len(human_pose['keypoints'])
@@ -58,8 +59,6 @@ def preprocess(image):
 
 parse = ParseObjects(topology)
 draw = DrawObjects(topology)
-camera = USBCamera(width=224, height=224, capture_fps=30)
-camera.running = True
 
 def publish_image(image):
     img = Image()
@@ -82,9 +81,11 @@ def human_publish(people):
 
 print("Ready to Start Inference")
 input("\t Press [Enter] to start")
-def execute(change):
+def execute(msg):
+    
+    image = np.array(list(bytearray(msg.data)),dtype='uint8')
+    image = img.reshape(msg.width,msg.height,3)
     try:
-        image = change['new']
         data = preprocess(image)
         cmap, paf = model_trt(data)
         cmap, paf = cmap.detach().cpu(), paf.detach().cpu()
@@ -98,7 +99,6 @@ def execute(change):
         camera.unobserve_all()
         exit()
 
-camera.observe(execute,names='value')
 
     
 def get_points(counts,objects,peaks):
@@ -122,5 +122,8 @@ def get_points(counts,objects,peaks):
     return people        
     
     
-    
+
+rospy.Subscriber("/inference/np_in",Image,execute)
+while not rospy.is_shutdown():
+    rospy.spin()    
 

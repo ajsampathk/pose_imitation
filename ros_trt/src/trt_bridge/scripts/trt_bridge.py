@@ -11,7 +11,9 @@ from PIL import Image as IMG
 
 rospy.init_node('Inferece_Bridge')
 
-image_pub = rospy.Publisher('/Pose/image_raw',Image,queue_size=5)
+np_pub = rospy.Publisher('/inference/np_in',Image,queue_size=5)
+image_pub = rospy.Publisher('/pose/image_raw',Image,queue_size=5)
+
 bridge = CvBridge()
 
 Prediction = "None"
@@ -21,7 +23,22 @@ def update_pred(msg):
   Prediction = msg.data.split(',')[0].split(':')[1]
 
 
-def cb(msg):
+def img2np(msg):
+  try:
+    image=bridge.imgmsg_to_cv2(msg,msg.encoding)
+    image = cv2.resize(224,224,3)
+    img = Image()
+    (img.width ,img.height,n)=image.shape
+    img.encoding = "rgb8"
+    img.is_bigendian = 0
+    img.data = image.ravel().tolist()
+    img.step=3
+    np_pub.publish(img)
+    
+  except CvBridgeError as e:
+    print(e)
+
+def np2img(msg):
   global Prediction
   img = np.array(list(bytearray(msg.data)),dtype='uint8')
   img = img.reshape(msg.width,msg.height,3)
@@ -37,8 +54,9 @@ def cb(msg):
   except CvBridgeError as e:
     print(e)
 
-rospy.Subscriber('/Inference/pre_image',Image,cb)
-rospy.Subscriber("/Human_Pose/Prediction",String,update_pred)
+rospy.Subscriber('/inference/np_out',Image,np2img)
+rospy.Subscriber('/human_Pose/prediction',String,update_pred)
+rospy.Subscriber('/camera/color/image_raw',Image,img2np)
 
 
 while not rospy.is_shutdown():
