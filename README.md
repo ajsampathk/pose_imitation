@@ -70,10 +70,95 @@ catkin_make
 Or, you can copy the folder ```trt_bridge``` to your desired workspace and build it there.
 Once it is built, we should have everything we needto run our inference engine.
 
+**Note- ros-melodic-cv-bridge is a dependancy**
+
+### Step 5 - Classification 
+We have the joint positions from the trt inference engine we just set up, now the next task is t detect/classify different gestures. 
+
+#### Step 5.1 - Raw Datset 
+
+The dataset for this task is pretty straightforward, it consists of pictures with *ONLY ONE* person doing a gesture. 
+Collect pictures of different gestures with a folder for each, the scripts will consider the folder names as labels. The structure should be similar to this:
+
+    .
+    ├── ...
+    ├── dataset                         # root dataset folder [DATASET]
+    │   ├── gesture_1                   # Label of the gesture
+    |   |    ├── gesture_1_frame_0.jpg  # individual image files 
+    |   |    ├── gesture_1_frame_1.jpg 
+    |   |    └── ...
+    │   ├── gesture_2        
+    │   └── ...            
+    └── ...
+    
+#### Step 5.2 - Generating the labelled data
+
+To generate the required labelled data, we will pass all the images through the inference engine and get the required relevent informatio. There are two different approaches to this, one with the *(X,Y)* coordinates of each joint or, to pre-process tose coordinates to get the joint angles.
+
+##### Step 5.2.1 - Coordinate dataset
+
+The ``` generate_dataset.py``` will generate the coordinate labelled data, so we can run:
+
+```python
+python3 generate_dataset.py [DATASET FOLDER]
+```
+
+##### Step 5.2.2 - Processed dataset
+
+The ```generate_dataset_processed.py``` will generate the processed angle data.
+
+```python
+python3 generate_dataset_processed.py [DATA FOLDER]
+```
+
+#### Step 5.3  - Training 
+
+Once the dataset generation is done, it should produce two ```.json``` files, ```Labels_processed_[DATASET].json``` and ```LabelIndex[DATASET].json```.
+We can now train the clasifer model with the generated files using the ```train.py``` script.
+
+```python
+python3 train.py Labels_processed_[DATASET].json LabelIndex[DATASET].json
+```
+You may want to change the number of epochs and batches based on the number of images you have in the dataset. You can take a look at the ```train.py``` script to modify these values.
+
+#### Step 5.4 - Real-Time Classification
+
+The training will generate a ```.pth``` file in the ```models/``` folder with the name ```classifier_net_[DATASET]_[M]x[N]_h1xh2_[M]x[N]_size_[SIZE].pth```.
+Modify the name inside the ```classify.py``` script accordingly.
+
+We can pass the LabelIndex to the classify script like this:
+
+```pyhton3 classify.py LabelIndex_[DATASET].json```
+
+### Step 6 - Executing all modules
+
+Now, running everything step-by-step, make sure a camera is connected to the nano, the default camera input is video0. if you have multiple cameras connected, make sure the right one is selected in the ```inference.py``` script. **Note- Make sure you run inference and classify in the tasks/human_pose/ directory**
+
+#### Step 6.1 - Inference Engine
+
+```python
+source ../../ros_trt/devel/setup.bash
+python3 inference.py 
+```
+#### Step 6.2 - Classifier 
+In a new terminal at ```[PATH]/tasks/human_pose/``` directory
+
+```python
+python3 classify.py LabelIndex_[DATASET].json
+```
+#### Step 6.3 - Bridge 
+In another terminal.
+
+```python
+source [PATH-TO-REPOSITORY-ROOT]/ros_trt/devel/setup.bash
+rosrun trt_bridge trt_bridge.py
+```
+You can then start ```rqt``` to visualize the ```/pose/image_raw``` topic to see the results.
 
 
-### Resluts
+### Results
+#### Inference :
+![](test_results.gif "ROS-TRTPOS:")
 
-![](test_results.gif "ROS-TRTPOSE:")
-
-![](gesture_results.gif "ROS-Gesture-Classification:")
+#### Classification:
+![](gesture_results.gif "ROS-Gesture-Classification")
