@@ -60,7 +60,7 @@ model = LinearModel(len(INPUT[0]),len(OUTPUT[0]))
 criterion = torch.nn.MSELoss(reduction='mean')
 optimizer = torch.optim.SGD(model.parameters(),lr=0.05)
 
-for epoch in range(50000):
+for epoch in range(10000):
     Tloss = 0
     for i in range(len(BATCH_INPUT)):
       pred_y = model(BATCH_INPUT[i].float())

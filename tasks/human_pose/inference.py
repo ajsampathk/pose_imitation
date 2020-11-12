@@ -34,8 +34,8 @@ from trt_bridge.msg import *
 human_msg = Human()
 
 rospy.init_node('Inference')
-image_pub = rospy.Publisher("/inference/np_out",Image,queue_size=5)
-human_pub = rospy.Publisher("/inference/Humans", Human,queue_size=5)
+image_pub = rospy.Publisher("/inference/np_out",Image,queue_size=1)
+human_pub = rospy.Publisher("/inference/humans", Human,queue_size=1)
 print("Done")
 
 num_parts = len(human_pose['keypoints'])
@@ -59,6 +59,8 @@ def preprocess(image):
 
 parse = ParseObjects(topology)
 draw = DrawObjects(topology)
+#camera = USBCamera(width=224,height=224,capture_fps=30)
+#camera.running = True
 
 def publish_image(image):
     img = Image()
@@ -81,10 +83,10 @@ def human_publish(people):
 
 print("Ready to Start Inference")
 input("\t Press [Enter] to start")
-def execute(msg):
+def execute(image):
     
-    image = np.array(list(bytearray(msg.data)),dtype='uint8')
-    image = img.reshape(msg.width,msg.height,3)
+#    image = np.array(list(bytearray(msg.data)),dtype='uint8')
+#    image = image.reshape(msg.width,msg.height,3)
     try:
         data = preprocess(image)
         cmap, paf = model_trt(data)
@@ -96,7 +98,6 @@ def execute(msg):
         rospy.loginfo("Inference complete {} person(s) detected".format(counts[0]))
     except KeyboardInterrupt:
         print("Shutting Down...")
-        camera.unobserve_all()
         exit()
 
 
@@ -122,8 +123,11 @@ def get_points(counts,objects,peaks):
     return people        
     
     
-
-rospy.Subscriber("/inference/np_in",Image,execute)
+cam = cv2.VideoCapture(0)
+rate = rospy.Rate(30)
 while not rospy.is_shutdown():
-    rospy.spin()    
+        ret,image = cam.read()
+        image = cv2.resize(image,(224,224))
+        execute(image)
+        rate.sleep()
 

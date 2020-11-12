@@ -21,7 +21,7 @@ import math
 print("Done")
 device = torch.device("cuda")
 
-
+THRESHOLD = 0.7
 labels = json.load(open(INDEX,'r'))
 human_pose = json.load(open('human_pose.json','r'))
 
@@ -30,12 +30,12 @@ print("Loading Classifier Model..")
 IN_SIZE = 6
 OUT_SIZE = len(labels)
 model = LinearModel(IN_SIZE,OUT_SIZE)
-print(model.load_state_dict(torch.load("models/classifier_net_Labels_processed_PoseDataset_6x5_h1xh2_6x5_size_21.pth"))) #
+print(model.load_state_dict(torch.load("models/classifier_net_Labels_processed_dataset_6x4_h1xh2_6x4_size_82.pth"))) #
 print("Done")
 
 print("Starting ROS Node..")
 rospy.init_node("Human_Pose_Classifier")
-pred_pub = rospy.Publisher("/Human_Pose/Prediction",String,queue_size=5)
+pred_pub = rospy.Publisher("/human_Pose/prediction",String,queue_size=5)
 
 
 def get_pairs(person):
@@ -88,10 +88,12 @@ def keypoints_proc(msg):
     scores = pred.data.tolist()[0]
     pred_conf = max(scores)
     pred_label = labels[scores.index(pred_conf)]
-    pubstr = "Prdection: {}, confidence:{}".format(pred_label,pred_conf)
-    rospy.loginfo(pubstr)
-    pred_pub.publish(pubstr)
-    
+    if(pred_conf>THRESHOLD):
+      pubstr = "{}".format(pred_label)
+      rospy.loginfo(pubstr)
+      pred_pub.publish(pubstr)
+    else:
+     pass
     
 
 def keypoints_raw(msg):
@@ -110,7 +112,7 @@ def keypoints_raw(msg):
     pred_pub.publish(pubstr)
 
 if __name__ == '__main__':
-    rospy.Subscriber("/Inference/Humans",Human,keypoints_proc)
+    rospy.Subscriber("/inference/humans",Human,keypoints_proc)
     while not rospy.is_shutdown():
         rospy.spin()
     

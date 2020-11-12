@@ -142,6 +142,6 @@ for label in labels:
         dataset[sample]={"input":num_data,"output":[label==l for l in labels]}
 
 
-print("Writing to \"Lables_processed.json\"..")
+print("Writing to \"Lables_processed_[].json\"..".format(DATA_PATH.split('/')[0]))
 json.dump(dataset,open('Labels_processed_'+DATA_PATH.split('/')[0]+'.json','w'))
 json.dump(labels,open('LabelIndex_'+DATA_PATH.split('/')[0]+'.json','w'))
