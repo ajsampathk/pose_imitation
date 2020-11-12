@@ -1,4 +1,4 @@
-FROM ajsampathkk/jetson-pytorch-ros:base
+FROM ajsamk/jetson-pytorch-ros:base
 
 MAINTAINER Abhijith Sampathkrishna aj.sampathk@gmail.com
 
